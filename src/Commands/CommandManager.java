@@ -1,8 +1,9 @@
 package Commands;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
+import java.awt.image.WritableRaster;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +17,11 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.jetbrains.annotations.NotNull;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.core.Size;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -26,6 +32,7 @@ import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import net.sourceforge.tess4j.util.ImageHelper;
+import nu.pattern.OpenCV;
 
 public class CommandManager extends ListenerAdapter {
 	public static SlashCommandInteractionEvent mainEvent;
@@ -128,22 +135,24 @@ public class CommandManager extends ListenerAdapter {
 
 	public static void processImg(BufferedImage ipimage, float scaleFactor, float offset)
 			throws IOException, TesseractException {
+		
+
 		// Making an empty image buffer
 		// to store image later
 		// ipimage is an image buffer
 		// of input image
-		BufferedImage opimage = new BufferedImage(1050, 1024, ipimage.getType());
+//		BufferedImage opimage = new BufferedImage(1050, 1024, ipimage.getType());
 
 		// creating a 2D platform
 		// on the buffer image
 		// for drawing the new image
-		Graphics2D graphic = opimage.createGraphics();
+//		Graphics2D graphic = opimage.createGraphics();
 
 		// drawing new image starting from 0 0
 		// of size 1050 x 1024 (zoomed images)
 		// null is the ImageObserver class object
-		graphic.drawImage(ipimage, 0, 0, 1050, 1024, null);
-		graphic.dispose();
+//		graphic.drawImage(ipimage, 0, 0, 1050, 1024, null);
+//		graphic.dispose();
 
 		// rescale OP object
 		// for gray scaling images
@@ -151,19 +160,75 @@ public class CommandManager extends ListenerAdapter {
 
 		// performing scaling
 		// and writing on a .png file
-		BufferedImage fopimage = rescale.filter(opimage, null);
-		ImageIO.write(fopimage, "jpg", new File("D:\\MaplestoryM\\AB\\AB_improved.png"));
+//		BufferedImage fopimage = rescale.filter(opimage, null);
+//		ImageIO.write(fopimage, "jpg", new File("D:\\MaplestoryM\\AB\\AB_improved.png"));
 
 		// Instantiating the Tesseract class
 		// which is used to perform OCR
 		Tesseract it = new Tesseract();
+		
+		String str = it.doOCR(ipimage); // greyscale to fix red coloured text not
+		System.out.println("ipimageipimage:" + str);
+		
+		String convertImageToGrayscaletext = it.doOCR(ImageHelper.convertImageToGrayscale(ipimage)); // greyscale to fix red coloured text not
+		System.out.println("convertImageToGrayscaletext:" + convertImageToGrayscaletext);
+		
+		
+//		it.setTessVariable("tessedit_char_whitelist", "0123456789:,"); // detect number only
 
 		it.setDatapath("D:\\MaplestoryM\\AB");
+//		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); // https://www.tutorialspoint.com/reading-a-colored-image-as-grey-scale-using-java-opencv-library
+
+		nu.pattern.OpenCV.loadLocally(); // add this
+
+		OpenCV cv = new OpenCV();
+
+		// https://www.tutorialspoint.com/reading-a-colored-image-as-grey-scale-using-java-opencv-library
+		Mat gray = Imgcodecs.imread("D:\\MaplestoryM\\AB\\AB.png", Imgcodecs.IMREAD_GRAYSCALE);
+		Mat resizedMat = new Mat();
+		double width = gray.cols();
+		double height = gray.rows();
+		double aspect = width / height;
+		Size sz = new Size(width * aspect * 2, height * aspect * 2);
+		Imgproc.resize(gray, resizedMat, sz);
+
+		Imgcodecs.imwrite("D:\\MaplestoryM\\AB\\AB_gray.png", gray);
+
+//		Mat result;
+//		adaptiveThreshold(gray, result, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 15, 40);
 
 		// doing OCR on the image
 		// and storing result in string str
-		String str = it.doOCR(ImageHelper.convertImageToGrayscale(fopimage)); // greyscale to fix red coloured text not reading
-		System.out.println(str);
+
+		BufferedImage topimage = Mat2BufferedImage(gray);
+		String topimageString = it.doOCR(topimage); // greyscale to fix red coloured text not
+		System.out.println("topimage:" + str);
+
+		ImageIO.write(thresholdImage(ipimage, 128), "jpg", new File("D:\\MaplestoryM\\AB\\AB_thresholdImage.png"));
+
+		String thresholdImage = it.doOCR(thresholdImage(ipimage, 128)); // greyscale to fix red coloured text not
+
+		System.out.println("\n\n\nthresholdImage:" + thresholdImage);
+		
+		
+//		BufferedImage fopimage = rescale.filter(opimage, null);
+//		ImageIO.write(fopimage, "jpg", new File("D:\\MaplestoryM\\AB\\AB_improved.png"));
+
+
+		// reading
+	}
+
+	// https://www.tutorialspoint.com/how-to-convert-opencv-mat-object-to-bufferedimage-object-using-java
+	public static BufferedImage Mat2BufferedImage(Mat mat) throws IOException {
+		// Encoding the image
+		MatOfByte matOfByte = new MatOfByte();
+		Imgcodecs.imencode(".jpg", mat, matOfByte);
+		// Storing the encoded Mat in a byte array
+		byte[] byteArray = matOfByte.toArray();
+		// Preparing the Buffered Image
+		InputStream in = new ByteArrayInputStream(byteArray);
+		BufferedImage bufImage = ImageIO.read(in);
+		return bufImage;
 	}
 
 //	// Guild command -- instantly updated (max 100)
@@ -191,6 +256,25 @@ public class CommandManager extends ListenerAdapter {
 
 	public void setMainEvent(SlashCommandInteractionEvent mainEvent) {
 		this.mainEvent = mainEvent;
+	}
+
+	// https://stackoverflow.com/a/17542851
+	public static BufferedImage thresholdImage(BufferedImage image, int threshold) {
+		BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+		result.getGraphics().drawImage(image, 0, 0, null);
+		WritableRaster raster = result.getRaster();
+		int[] pixels = new int[image.getWidth()];
+		for (int y = 0; y < image.getHeight(); y++) {
+			raster.getPixels(0, y, image.getWidth(), 1, pixels);
+			for (int i = 0; i < pixels.length; i++) {
+				if (pixels[i] < threshold)
+					pixels[i] = 0;
+				else
+					pixels[i] = 255;
+			}
+			raster.setPixels(0, y, image.getWidth(), 1, pixels);
+		}
+		return result;
 	}
 
 }
