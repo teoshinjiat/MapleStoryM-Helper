@@ -12,6 +12,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -135,7 +136,6 @@ public class CommandManager extends ListenerAdapter {
 
 	public static void processImg(BufferedImage ipimage, float scaleFactor, float offset)
 			throws IOException, TesseractException {
-		
 
 		// Making an empty image buffer
 		// to store image later
@@ -166,15 +166,22 @@ public class CommandManager extends ListenerAdapter {
 		// Instantiating the Tesseract class
 		// which is used to perform OCR
 		Tesseract it = new Tesseract();
-		
-		String str = it.doOCR(ipimage); // greyscale to fix red coloured text not
-		System.out.println("ipimageipimage:" + str);
-		
-		String convertImageToGrayscaletext = it.doOCR(ImageHelper.convertImageToGrayscale(ipimage)); // greyscale to fix red coloured text not
-		System.out.println("convertImageToGrayscaletext:" + convertImageToGrayscaletext);
-		
-		
-//		it.setTessVariable("tessedit_char_whitelist", "0123456789:,"); // detect number only
+
+//		String str = it.doOCR(ipimage); // greyscale to fix red coloured text not
+//		System.out.println("ipimageipimage:" + str);
+		it.setTessVariable("tessedit_char_whitelist", "0123456789:,"); // detect number only
+
+		String convertImageToBinary = it.doOCR(ImageHelper.convertImageToBinary(ipimage)); // greyscale to fix red
+																							// coloured text not
+		System.out.println("convertImageToGrayscaletext:" + convertImageToBinary);
+
+		String splits[] = convertImageToBinary.split("\\n");
+
+		ArrayList<String> importantInfo = new ArrayList<>();
+		for (String split : splits) {
+			System.out.println("split : " + split);
+			String splitsWithoutComma[] = convertImageToBinary.split(",");
+		}
 
 		it.setDatapath("D:\\MaplestoryM\\AB");
 //		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); // https://www.tutorialspoint.com/reading-a-colored-image-as-grey-scale-using-java-opencv-library
@@ -202,18 +209,15 @@ public class CommandManager extends ListenerAdapter {
 
 		BufferedImage topimage = Mat2BufferedImage(gray);
 		String topimageString = it.doOCR(topimage); // greyscale to fix red coloured text not
-		System.out.println("topimage:" + str);
 
 		ImageIO.write(thresholdImage(ipimage, 128), "jpg", new File("D:\\MaplestoryM\\AB\\AB_thresholdImage.png"));
 
-		String thresholdImage = it.doOCR(thresholdImage(ipimage, 128)); // greyscale to fix red coloured text not
+//		String thresholdImage = it.doOCR(thresholdImage(ipimage, 128)); // greyscale to fix red coloured text not
 
-		System.out.println("\n\n\nthresholdImage:" + thresholdImage);
-		
-		
+//		System.out.println("\n\n\nthresholdImage:" + thresholdImage);
+
 //		BufferedImage fopimage = rescale.filter(opimage, null);
 //		ImageIO.write(fopimage, "jpg", new File("D:\\MaplestoryM\\AB\\AB_improved.png"));
-
 
 		// reading
 	}
