@@ -11,5 +11,7 @@ yields
 
 target to formulate result of the grind based on the uploaded image
 example: 
+
 mesos : 1s = 823 mesos, 1 hour = 2,965,542 mesos
+
 exp: 1s = 120,362, 1 hour = 433,304,296
