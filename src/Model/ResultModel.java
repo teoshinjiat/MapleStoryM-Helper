@@ -1,58 +1,58 @@
 package Model;
 
 public class ResultModel {
-	private int durationInSeconds;
-	private int mobsKilledPerSec;
-	private int expPerSec;
-	private int goldMesosPerSec;
-	private int redMesosPerSec;
-	private int totalMesosPerSec;
+	private long durationInSeconds;
+	private double mobsKilledPerSec;
+	private long expPerSec;
+	private long goldMesosPerSec;
+	private long redMesosPerSec;
+	private long totalMesosPerSec;
 
-	public int getDurationInSeconds() {
+	public long getDurationInSeconds() {
 		return durationInSeconds;
 	}
 
-	public void setDurationInSeconds(int durationInSeconds) {
+	public void setDurationInSeconds(long durationInSeconds) {
 		this.durationInSeconds = durationInSeconds;
 	}
 
-	public int getMobsKilledPerSec() {
+	public double getMobsKilledPerSec() {
 		return mobsKilledPerSec;
 	}
 
-	public void setMobsKilledPerSec(int mobsKilledPerSec) {
+	public void setMobsKilledPerSec(double mobsKilledPerSec) {
 		this.mobsKilledPerSec = mobsKilledPerSec;
 	}
 
-	public int getExpPerSec() {
+	public long getExpPerSec() {
 		return expPerSec;
 	}
 
-	public void setExpPerSec(int expPerSec) {
+	public void setExpPerSec(long expPerSec) {
 		this.expPerSec = expPerSec;
 	}
 
-	public int getGoldMesosPerSec() {
+	public long getGoldMesosPerSec() {
 		return goldMesosPerSec;
 	}
 
-	public void setGoldMesosPerSec(int goldMesosPerSec) {
+	public void setGoldMesosPerSec(long goldMesosPerSec) {
 		this.goldMesosPerSec = goldMesosPerSec;
 	}
 
-	public int getRedMesosPerSec() {
+	public long getRedMesosPerSec() {
 		return redMesosPerSec;
 	}
 
-	public void setRedMesosPerSec(int redMesosPerSec) {
+	public void setRedMesosPerSec(long redMesosPerSec) {
 		this.redMesosPerSec = redMesosPerSec;
 	}
 
-	public int getTotalMesosPerSec() {
+	public long getTotalMesosPerSec() {
 		return totalMesosPerSec;
 	}
 
-	public void setTotalMesosPerSec(int totalMesosPerSec) {
+	public void setTotalMesosPerSec(long totalMesosPerSec) {
 		this.totalMesosPerSec = totalMesosPerSec;
 	}
 

@@ -57,10 +57,10 @@ public class CommandManager extends ListenerAdapter {
 		TextInput redMesos = TextInput.create("redMesosModal", "Red Mesos", TextInputStyle.SHORT).setMinLength(1)
 				.setRequired(true).setPlaceholder("32154632 or 32,154,632").build();
 
-		TextInput exp = TextInput.create("expModal", "EXP", TextInputStyle.SHORT).setMinLength(1).setRequired(true)
+		TextInput exp = TextInput.create("expModal", "EXP", TextInputStyle.SHORT).setMinLength(1).setRequired(false)
 				.setPlaceholder("32154632 or 32,154,632").build();
 
-		Modal modal = Modal.create("grind-modal", "Say wassup").addActionRows(ActionRow.of(duration),
+		Modal modal = Modal.create("grind-modal", "Grind Calculator").addActionRows(ActionRow.of(duration),
 				ActionRow.of(numberOfMobsKilled), ActionRow.of(goldMesos), ActionRow.of(redMesos), ActionRow.of(exp))
 				.build();
 
