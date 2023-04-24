@@ -29,6 +29,10 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.Modal;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
@@ -40,19 +44,27 @@ public class CommandManager extends ListenerAdapter {
 	public static MessageEmbed debugMessage;
 
 	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-		this.setMainEvent(event);
-		String command = event.getName();
 
-		if (command.equals("nodewar_signup")) { // command / welcome
-			String userTag = event.getUser().getAsTag();
-			// event.reply("Creating nodewar template, **" + userTag + "**!").queue();
-			System.out.println("nodewar_signup");
-//			new Nodewar(event).buildEmbedMessage();
-		} else if (command.equals("role_request")) { // command / welcome
-			String userTag = event.getUser().getAsTag();
-			System.out.println("role_request");
-//			new RoleManager(event).buildEmbedMessage();
-		}
+		TextInput duration = TextInput.create("durationModal", "Duration in MM:SS format", TextInputStyle.SHORT).setMinLength(1)
+				.setRequired(true).setPlaceholder("360:00").build();
+
+		TextInput numberOfMobsKilled = TextInput.create("numberModal", "Number of Mobs Killed", TextInputStyle.SHORT).setMinLength(1)
+				.setRequired(false).setPlaceholder("1258, can be empty").build();
+
+		TextInput goldMesos = TextInput.create("goldMesosModal", "Gold Mesos", TextInputStyle.SHORT).setMinLength(1)
+				.setRequired(true).setPlaceholder("32154632 or 32,154,632").build();
+
+		TextInput redMesos = TextInput.create("redMesosModal", "Red Mesos", TextInputStyle.SHORT).setMinLength(1)
+				.setRequired(true).setPlaceholder("32154632 or 32,154,632").build();
+
+		TextInput exp = TextInput.create("expModal", "EXP", TextInputStyle.SHORT).setMinLength(1).setRequired(true)
+				.setPlaceholder("32154632 or 32,154,632").build();
+
+		Modal modal = Modal.create("grind-modal", "Say wassup").addActionRows(ActionRow.of(duration),
+				ActionRow.of(numberOfMobsKilled), ActionRow.of(goldMesos), ActionRow.of(redMesos), ActionRow.of(exp))
+				.build();
+
+		event.replyModal(modal).queue();
 	}
 
 	public void onMessageReceived(MessageReceivedEvent event) {
