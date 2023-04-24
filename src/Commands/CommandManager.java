@@ -45,11 +45,11 @@ public class CommandManager extends ListenerAdapter {
 
 	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
 
-		TextInput duration = TextInput.create("durationModal", "Duration in MM:SS format", TextInputStyle.SHORT).setMinLength(1)
-				.setRequired(true).setPlaceholder("360:00").build();
+		TextInput duration = TextInput.create("durationModal", "Duration in MM:SS format", TextInputStyle.SHORT)
+				.setMinLength(1).setRequired(true).setPlaceholder("360:00").build();
 
-		TextInput numberOfMobsKilled = TextInput.create("numberModal", "Number of Mobs Killed", TextInputStyle.SHORT).setMinLength(1)
-				.setRequired(false).setPlaceholder("1258, can be empty").build();
+		TextInput numberOfMobsKilled = TextInput.create("numberModal", "Number of Mobs Killed", TextInputStyle.SHORT)
+				.setMinLength(1).setRequired(false).setPlaceholder("1258, can be empty").build();
 
 		TextInput goldMesos = TextInput.create("goldMesosModal", "Gold Mesos", TextInputStyle.SHORT).setMinLength(1)
 				.setRequired(true).setPlaceholder("32154632 or 32,154,632").build();
