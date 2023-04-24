@@ -3,13 +3,10 @@ package Main;
 import javax.security.auth.login.LoginException;
 
 import Commands.CommandManager;
-import Service.ReactionService;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 public class Main {
@@ -27,14 +24,13 @@ public class Main {
 		builder.getPresence().setStatus(OnlineStatus.IDLE);
 		builder.getPresence().setActivity(Activity.competing("Nodewar"));
 		builder.addEventListener(new CommandManager());
-		builder.addEventListener(new ReactionService());
 
-		Guild Gonzo = builder.getGuildById("557904022523346945");
-		if (Gonzo != null) {
-			Gonzo.upsertCommand("nodewar_signup",
-					"Create Nodewar Sign-up template, hit \"Spacebar\" then follow by a message if you have a title for it.")
-					.addOption(OptionType.STRING, "title", "leave empty if none", false).queue();
-			Gonzo.upsertCommand("role_request", "Create get roles template").queue();
-		}
+//		Guild Gonzo = builder.getGuildById("557904022523346945");
+//		if (Gonzo != null) {
+//			Gonzo.upsertCommand("nodewar_signup",
+//					"Create Nodewar Sign-up template, hit \"Spacebar\" then follow by a message if you have a title for it.")
+//					.addOption(OptionType.STRING, "title", "leave empty if none", false).queue();
+//			Gonzo.upsertCommand("role_request", "Create get roles template").queue();
+//		}
 	}
 }

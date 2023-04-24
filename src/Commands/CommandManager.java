@@ -17,7 +17,6 @@ import javax.imageio.ImageIO;
 
 import org.jetbrains.annotations.NotNull;
 
-import EmbedManager.Nodewar;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -26,6 +25,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
+import net.sourceforge.tess4j.util.ImageHelper;
 
 public class CommandManager extends ListenerAdapter {
 	public static SlashCommandInteractionEvent mainEvent;
@@ -43,7 +43,7 @@ public class CommandManager extends ListenerAdapter {
 		} else if (command.equals("role_request")) { // command / welcome
 			String userTag = event.getUser().getAsTag();
 			System.out.println("role_request");
-			new RoleManager(event).buildEmbedMessage();
+//			new RoleManager(event).buildEmbedMessage();
 		}
 	}
 
@@ -74,11 +74,11 @@ public class CommandManager extends ListenerAdapter {
 				System.out.println("attachments.get(0).getUrl() : " + attachments.get(0).getUrl());
 
 				try (InputStream in = new URL(attachments.get(0).getUrl()).openStream()) {
-					Files.copy(in, Paths.get("D:/Gonzo/Nodewar/scoreboard.png"), StandardCopyOption.REPLACE_EXISTING);
+					Files.copy(in, Paths.get("D:/MaplestoryM/AB/AB.png"), StandardCopyOption.REPLACE_EXISTING);
 					ttt();
 					ITesseract image = new Tesseract();
-					String textFromImage = image.doOCR(new File("D:\\Gonzo\\Nodewar\\scoreboard.png"));
-					//System.out.println("textFromImage : " + textFromImage);
+					String textFromImage = image.doOCR(new File("D:\\MaplestoryM\\AB\\AB.png"));
+					// System.out.println("textFromImage : " + textFromImage);
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -99,43 +99,32 @@ public class CommandManager extends ListenerAdapter {
 
 		}
 	}
-	
-	 public static void ttt() throws Exception
-	    {
-	        File f
-	            = new File(
-	                "D:\\Gonzo\\Nodewar\\scoreboard.png");
-	  
-	        BufferedImage ipimage = ImageIO.read(f);
-	  
-	        // getting RGB content of the whole image file
-	        double d
-	            = ipimage
-	                  .getRGB(ipimage.getTileWidth() / 2,
-	                          ipimage.getTileHeight() / 2);
-	  
-	        // comparing the values
-	        // and setting new scaling values
-	        // that are later on used by RescaleOP
-	        if (d >= -1.4211511E7 && d < -7254228) {
-	            processImg(ipimage, 3f, -10f);
-	        }
-	        else if (d >= -7254228 && d < -2171170) {
-	            processImg(ipimage, 1.455f, -47f);
-	        }
-	        else if (d >= -2171170 && d < -1907998) {
-	            processImg(ipimage, 1.35f, -10f);
-	        }
-	        else if (d >= -1907998 && d < -257) {
-	            processImg(ipimage, 1.19f, 0.5f);
-	        }
-	        else if (d >= -257 && d < -1) {
-	            processImg(ipimage, 1f, 0.5f);
-	        }
-	        else if (d >= -1 && d < 2) {
-	            processImg(ipimage, 1f, 0.35f);
-	        }
-	    }
+
+	public static void ttt() throws Exception {
+		File f = new File("D:\\MaplestoryM\\AB\\AB.png");
+
+		BufferedImage ipimage = ImageIO.read(f);
+
+		// getting RGB content of the whole image file
+		double d = ipimage.getRGB(ipimage.getTileWidth() / 2, ipimage.getTileHeight() / 2);
+
+		// comparing the values
+		// and setting new scaling values
+		// that are later on used by RescaleOP
+		if (d >= -1.4211511E7 && d < -7254228) {
+			processImg(ipimage, 3f, -10f);
+		} else if (d >= -7254228 && d < -2171170) {
+			processImg(ipimage, 1.455f, -47f);
+		} else if (d >= -2171170 && d < -1907998) {
+			processImg(ipimage, 1.35f, -10f);
+		} else if (d >= -1907998 && d < -257) {
+			processImg(ipimage, 1.19f, 0.5f);
+		} else if (d >= -257 && d < -1) {
+			processImg(ipimage, 1f, 0.5f);
+		} else if (d >= -1 && d < 2) {
+			processImg(ipimage, 1f, 0.35f);
+		}
+	}
 
 	public static void processImg(BufferedImage ipimage, float scaleFactor, float offset)
 			throws IOException, TesseractException {
@@ -163,17 +152,17 @@ public class CommandManager extends ListenerAdapter {
 		// performing scaling
 		// and writing on a .png file
 		BufferedImage fopimage = rescale.filter(opimage, null);
-		ImageIO.write(fopimage, "jpg", new File("D:\\Gonzo\\Nodewar\\improved.png"));
+		ImageIO.write(fopimage, "jpg", new File("D:\\MaplestoryM\\AB\\AB_improved.png"));
 
 		// Instantiating the Tesseract class
 		// which is used to perform OCR
 		Tesseract it = new Tesseract();
 
-		it.setDatapath("D:\\Gonzo\\Nodewar");
+		it.setDatapath("D:\\MaplestoryM\\AB");
 
 		// doing OCR on the image
 		// and storing result in string str
-		String str = it.doOCR(fopimage);
+		String str = it.doOCR(ImageHelper.convertImageToGrayscale(fopimage)); // greyscale to fix red coloured text not reading
 		System.out.println(str);
 	}
 
