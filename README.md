@@ -4,9 +4,11 @@
 
 <summary>24/April/2023 Manual calculation based on user inputs </summary>
  Inputs
+ 
  ![image](https://user-images.githubusercontent.com/21898084/234108692-0ec6c186-1c59-41b8-95a7-6ec1d1f4c06f.png)
  
  Result
+ 
  ![image](https://user-images.githubusercontent.com/21898084/234108761-50f75856-c1e4-4666-81e8-16c145817a2b.png)
 
 
