@@ -1,4 +1,8 @@
 # MaplestoryM-Helper
+# Timeline (Gui Showcase)
+<details>
+
+<summary>23/April/2023 Image processing </summary>
 incomplete codes before refactoring
 
  uploading
@@ -15,3 +19,4 @@ example:
 mesos : **1s = 823 mesos**(1,583,839+473,928)/((41*60)+38), **1 hour = 2,965,542 mesos** (1,583,839+473,928)/((41*60)+38)*60*60
 
 exp: **1s = 120,362 exp** (300,665,037/((41*60)+38)), **1 hour = 433,304,296 exp** (300,665,037/((41*60)+38))*60*60
+</details>
