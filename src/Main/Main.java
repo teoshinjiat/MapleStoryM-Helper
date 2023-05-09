@@ -30,9 +30,8 @@ public class Main {
 	public static void main(String[] args) throws LoginException, InterruptedException, IOException {
 		System.out.println("Started MaplestoryM-Helper");
 
-		System.out.println("getBotTokenFromConfig() : " + getBotTokenFromConfig());
 		JDA builder = JDABuilder
-				.createDefault("rRhVpnrc7ym5QWlGkGHe5fwprQY2dTG2")
+				.createDefault(getBotTokenFromConfig())
 				.enableIntents(GatewayIntent.MESSAGE_CONTENT).build().awaitReady();
 		builder.getPresence().setStatus(OnlineStatus.IDLE);
 		builder.getPresence().setActivity(Activity.competing("MaplestoryM"));
