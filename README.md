@@ -1,6 +1,13 @@
 # MaplestoryM-Helper
 # Timeline (Showcase)
 
+![image](https://github.com/teoshinjiat/MapleStoryM-Helper/assets/21898084/454de709-e9cc-4ca0-b21e-bd5b39b0f35b)
+![image](https://github.com/teoshinjiat/MapleStoryM-Helper/assets/21898084/b6f22613-407c-453d-8fec-7044f1286e24)
+
+![image](https://github.com/teoshinjiat/MapleStoryM-Helper/assets/21898084/0406f184-80a2-4ea9-9d7d-8319335ca5ca)
+![image](https://github.com/teoshinjiat/MapleStoryM-Helper/assets/21898084/d52a193e-0778-49a0-ba43-446efd01efea)
+
+
 # 24/April/2023 Manual calculation based on user inputs
  Inputs
  
