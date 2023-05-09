@@ -11,8 +11,15 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
@@ -28,6 +35,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
@@ -43,7 +51,61 @@ public class CommandManager extends ListenerAdapter {
 	public static MessageEmbed debugMessage;
 
 	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+		String command = event.getName();
+		if (!event.getGuild().getId().equals("1103529354107031622")) {
+			event.getChannel().sendMessage("Invalid server, please join Stormwind guild to use the command.");
+		} else {
+			switch (command) {
+			case "grind_calc":
+				grindCalc(event);
+			case "ab_calc":
+				ab_calc(event);
+			}
+		}
+	}
 
+	private void ab_calc(@NotNull SlashCommandInteractionEvent event) {
+		OptionMapping messageOption = event.getOption("time");
+		String endTime = messageOption.getAsString();
+
+		if (!isValidTime(endTime) || endTime.length() != 5) {
+			event.reply("Invalid Input! **" + endTime + "** is not a valid 24 hour format.").setEphemeral(false)
+					.queue(); // setEphemeral(true) only the user who called the function can see the error
+			
+		} else {
+			event.reply("You need **" + calcTime(endTime) + "** minutes to auto battle until **" + endTime + "**")
+					.setEphemeral(false).queue();
+		}
+	}
+
+	private String calcTime(String endTime) {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+		String current24HourTime = sdf.format(new Date());
+		System.out.println("current24HourTime : " + current24HourTime);
+
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
+		LocalTime startLocalTime = LocalTime.parse(current24HourTime, dtf);
+		LocalTime endLocalTime = LocalTime.parse(endTime, dtf);
+
+		long diff = ChronoUnit.MINUTES.between(startLocalTime, endLocalTime); // get diff in minutes
+
+		if (endLocalTime.isBefore(startLocalTime)) {
+			diff += TimeUnit.DAYS.toMinutes(1); // add a day to account for day diff
+		}
+
+		return String.valueOf(diff);
+	}
+
+	private boolean isValidTime(String userInput) {
+		// https://www.geeksforgeeks.org/how-to-validate-time-in-24-hour-format-using-regular-expression/
+		String regex = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
+
+		Pattern p = Pattern.compile(regex);
+		System.out.println("p.matcher(userInput).matches() : " + p.matcher(userInput).matches());
+		return p.matcher(userInput).matches();
+	}
+
+	public void grindCalc(@NotNull SlashCommandInteractionEvent event) {
 		TextInput duration = TextInput.create("durationModal", "Duration in MM:SS format", TextInputStyle.SHORT)
 				.setMinLength(1).setRequired(true).setPlaceholder("360:00").build();
 
@@ -78,7 +140,7 @@ public class CommandManager extends ListenerAdapter {
 
 				try (InputStream in = new URL(attachments.get(0).getUrl()).openStream()) {
 					Files.copy(in, Paths.get("D:/MaplestoryM/AB/AB.png"), StandardCopyOption.REPLACE_EXISTING);
-					ttt();
+					imageHandling();
 					ITesseract image = new Tesseract();
 					String textFromImage = image.doOCR(new File("D:\\MaplestoryM\\AB\\AB.png"));
 				} catch (MalformedURLException e) {
@@ -102,7 +164,7 @@ public class CommandManager extends ListenerAdapter {
 		}
 	}
 
-	public static void imageProcessing() throws Exception {
+	public static void imageHandling() throws Exception {
 		File f = new File("D:\\MaplestoryM\\AB\\AB.png");
 
 		BufferedImage ipimage = ImageIO.read(f);

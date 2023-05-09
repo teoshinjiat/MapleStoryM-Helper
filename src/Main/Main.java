@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 public class Main {
@@ -22,7 +23,7 @@ public class Main {
 		System.out.println("Started MaplestoryM-Helper");
 
 		JDA builder = JDABuilder
-				.createDefault("MTA5OTk1NzgxMTQ0MzY4MzQwMA.GtDONf.q62otLQ2j-UjW-worQ1IaJgd4BEl4wScNovtZE")
+				.createDefault("MTA5OTk1NzgxMTQ0MzY4MzQwMA.G7UvNi.DidknQksUVyaou8I7b0tEMITs5qze5hrppTIO4")
 				.enableIntents(GatewayIntent.MESSAGE_CONTENT).build().awaitReady();
 		builder.getPresence().setStatus(OnlineStatus.IDLE);
 		builder.getPresence().setActivity(Activity.competing("MaplestoryM"));
@@ -30,11 +31,11 @@ public class Main {
 		builder.addEventListener(new ModalListener());
 		builder.addEventListener(new ABListener());
 
-
-		Guild Maple = builder.getGuildById("557904022523346945");
+		Guild Maple = builder.getGuildById("1103529354107031622");
 		if (Maple != null) {
-			Maple.upsertCommand("calc", "calculate grind result").queue();
-			Maple.upsertCommand("calcAB", "calculate minutes until expected end time").queue();
+			Maple.upsertCommand("grind_calc", "calculate grind result").queue();
+			Maple.upsertCommand("ab_calc", "calculate minutes until expected end time").addOption(OptionType.STRING,
+					"time", "Time in 24H Format, 2PM = 14:00 | 12AM = 00:00 | 2AM = 02:00", true).queue();
 		}
 	}
 }
