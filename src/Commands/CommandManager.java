@@ -1,7 +1,6 @@
 package Commands;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.RescaleOp;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -68,23 +67,7 @@ public class CommandManager extends ListenerAdapter {
 	}
 
 	public void onMessageReceived(MessageReceivedEvent event) {
-		System.out.println("MessageReceivedEvent()");
-
-//		if(Long.valueOf(event.getMessageId()).equals(Nodewar.embedNodewarMessageId) && !user.isBot()) {
-//		updateEmbedMessage();
-//		System.out.println("User, " + user.getAsTag() + " removed emoji : " + emoji + " on message id : " + event.getMessageId());
-//		Nodewar.attendanceModel.nameAndRole.remove(user.getAsMention());
-//		System.out.println("hash size : " + Nodewar.attendanceModel.nameAndRole.size());
-//	}
-
 		if (!event.getAuthor().isBot()) {
-//			event.getChannel().sendTyping();
-//			event.getChannel().sendMessage("gg").queue();
-			System.out.println("message : " + event.getMessage().getContentRaw());
-
-			System.out.println("event.getMessage().getAttachments().size() : " + event.getMessage().getAttachments());
-			System.out.println("event.getMessage().getEmbeds().size() : " + event.getMessage().getEmbeds().size());
-
 			if (!event.getMessage().getAttachments().isEmpty()) {
 
 				String contentType = event.getMessage().getAttachments().get(0).getContentType();
@@ -98,7 +81,6 @@ public class CommandManager extends ListenerAdapter {
 					ttt();
 					ITesseract image = new Tesseract();
 					String textFromImage = image.doOCR(new File("D:\\MaplestoryM\\AB\\AB.png"));
-					// System.out.println("textFromImage : " + textFromImage);
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -120,7 +102,7 @@ public class CommandManager extends ListenerAdapter {
 		}
 	}
 
-	public static void ttt() throws Exception {
+	public static void imageProcessing() throws Exception {
 		File f = new File("D:\\MaplestoryM\\AB\\AB.png");
 
 		BufferedImage ipimage = ImageIO.read(f);
@@ -149,44 +131,13 @@ public class CommandManager extends ListenerAdapter {
 	public static void processImg(BufferedImage ipimage, float scaleFactor, float offset)
 			throws IOException, TesseractException {
 
-		// Making an empty image buffer
-		// to store image later
-		// ipimage is an image buffer
-		// of input image
-//		BufferedImage opimage = new BufferedImage(1050, 1024, ipimage.getType());
-
-		// creating a 2D platform
-		// on the buffer image
-		// for drawing the new image
-//		Graphics2D graphic = opimage.createGraphics();
-
-		// drawing new image starting from 0 0
-		// of size 1050 x 1024 (zoomed images)
-		// null is the ImageObserver class object
-//		graphic.drawImage(ipimage, 0, 0, 1050, 1024, null);
-//		graphic.dispose();
-
 		// rescale OP object
 		// for gray scaling images
-		RescaleOp rescale = new RescaleOp(scaleFactor, offset, null);
-
-		// performing scaling
-		// and writing on a .png file
-//		BufferedImage fopimage = rescale.filter(opimage, null);
-//		ImageIO.write(fopimage, "jpg", new File("D:\\MaplestoryM\\AB\\AB_improved.png"));
-
-		// Instantiating the Tesseract class
-		// which is used to perform OCR
 		Tesseract it = new Tesseract();
-
-//		String str = it.doOCR(ipimage); // greyscale to fix red coloured text not
-//		System.out.println("ipimageipimage:" + str);
 		it.setTessVariable("tessedit_char_whitelist", "0123456789:,"); // detect number only
 
 		String convertImageToBinary = it.doOCR(ImageHelper.convertImageToBinary(ipimage)); // greyscale to fix red
 																							// coloured text not
-		System.out.println("convertImageToGrayscaletext:" + convertImageToBinary);
-
 		String splits[] = convertImageToBinary.split("\\n");
 
 		ArrayList<String> importantInfo = new ArrayList<>();
@@ -196,7 +147,6 @@ public class CommandManager extends ListenerAdapter {
 		}
 
 		it.setDatapath("D:\\MaplestoryM\\AB");
-//		System.loadLibrary(Core.NATIVE_LIBRARY_NAME); // https://www.tutorialspoint.com/reading-a-colored-image-as-grey-scale-using-java-opencv-library
 
 		nu.pattern.OpenCV.loadLocally(); // add this
 
@@ -213,25 +163,10 @@ public class CommandManager extends ListenerAdapter {
 
 		Imgcodecs.imwrite("D:\\MaplestoryM\\AB\\AB_gray.png", gray);
 
-//		Mat result;
-//		adaptiveThreshold(gray, result, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 15, 40);
-
-		// doing OCR on the image
-		// and storing result in string str
-
 		BufferedImage topimage = Mat2BufferedImage(gray);
 		String topimageString = it.doOCR(topimage); // greyscale to fix red coloured text not
 
 		ImageIO.write(thresholdImage(ipimage, 128), "jpg", new File("D:\\MaplestoryM\\AB\\AB_thresholdImage.png"));
-
-//		String thresholdImage = it.doOCR(thresholdImage(ipimage, 128)); // greyscale to fix red coloured text not
-
-//		System.out.println("\n\n\nthresholdImage:" + thresholdImage);
-
-//		BufferedImage fopimage = rescale.filter(opimage, null);
-//		ImageIO.write(fopimage, "jpg", new File("D:\\MaplestoryM\\AB\\AB_improved.png"));
-
-		// reading
 	}
 
 	// https://www.tutorialspoint.com/how-to-convert-opencv-mat-object-to-bufferedimage-object-using-java
