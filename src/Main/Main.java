@@ -1,6 +1,14 @@
 package Main;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import javax.security.auth.login.LoginException;
+
+import org.apache.commons.io.IOUtils;
+import org.json.JSONObject;
 
 import Commands.CommandManager;
 import Listener.ABListener;
@@ -19,11 +27,12 @@ public class Main {
 	public static String prefix = "-";
 
 	// Main method
-	public static void main(String[] args) throws LoginException, InterruptedException {
+	public static void main(String[] args) throws LoginException, InterruptedException, IOException {
 		System.out.println("Started MaplestoryM-Helper");
 
+		System.out.println("getBotTokenFromConfig() : " + getBotTokenFromConfig());
 		JDA builder = JDABuilder
-				.createDefault("MTA5OTk1NzgxMTQ0MzY4MzQwMA.G7UvNi.DidknQksUVyaou8I7b0tEMITs5qze5hrppTIO4")
+				.createDefault("rRhVpnrc7ym5QWlGkGHe5fwprQY2dTG2")
 				.enableIntents(GatewayIntent.MESSAGE_CONTENT).build().awaitReady();
 		builder.getPresence().setStatus(OnlineStatus.IDLE);
 		builder.getPresence().setActivity(Activity.competing("MaplestoryM"));
@@ -37,5 +46,18 @@ public class Main {
 			Maple.upsertCommand("ab_calc", "calculate minutes until expected end time").addOption(OptionType.STRING,
 					"time", "Time in 24H Format, 2PM = 14:00 | 12AM = 00:00 | 2AM = 02:00", true).queue();
 		}
+	}
+
+	private static String getBotTokenFromConfig() throws IOException {
+		String filePath = System.getProperty("user.dir") + "\\src\\config.json";
+		File f = new File(filePath);
+		String token = null;
+		if (f.exists()) {
+			InputStream is = new FileInputStream(filePath);
+			String jsonTxt = IOUtils.toString(is, "UTF-8");
+			JSONObject json = new JSONObject(jsonTxt);
+			token = json.getString("token");
+		}
+		return token;
 	}
 }
