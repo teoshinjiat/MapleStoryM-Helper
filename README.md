@@ -1,6 +1,13 @@
 # MaplestoryM-Helper
 # Timeline (Showcase)
 
+# 14/May/2023 Added icons in embed body
+![image](https://github.com/teoshinjiat/MapleStoryM-Helper/assets/21898084/b784b717-65bd-4bd0-a2d6-c63fe0a2f636)
+
+# 14/May/2023 Added Image Processing with Tesseract to fully automate user input
+![image](https://github.com/teoshinjiat/MapleStoryM-Helper/assets/21898084/9e23902e-5a2d-4909-96d3-84419f9e2216)
+
+
 # 10/May/2023 Added AB Calculation
 ![image](https://github.com/teoshinjiat/MapleStoryM-Helper/assets/21898084/454de709-e9cc-4ca0-b21e-bd5b39b0f35b)
 ![image](https://github.com/teoshinjiat/MapleStoryM-Helper/assets/21898084/b6f22613-407c-453d-8fec-7044f1286e24)
