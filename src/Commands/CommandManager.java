@@ -59,19 +59,30 @@ public class CommandManager extends ListenerAdapter {
 			case "grind_calc":
 				grindCalc(event);
 			case "ab_calc":
-				ab_calc(event);
+				abCalc(event);
+			case "package_calc":
+				packageCalc(event);
 			}
 		}
 	}
 
-	private void ab_calc(@NotNull SlashCommandInteractionEvent event) {
+	private void packageCalc(@NotNull SlashCommandInteractionEvent event) {
+		TextInput crystal = TextInput.create("durationModal", "Duration in MM:SS format", TextInputStyle.PARAGRAPH)
+				.setMinLength(1).setMaxLength(400).setRequired(true).setPlaceholder("5800|120\n4800|80").build();
+
+		Modal modal = Modal.create("grind-modal", "Package Calculator").addActionRows(ActionRow.of(crystal)).build();
+		event.replyModal(modal).queue();
+
+	}
+
+	private void abCalc(@NotNull SlashCommandInteractionEvent event) {
 		OptionMapping messageOption = event.getOption("time");
 		String endTime = messageOption.getAsString();
 
 		if (!isValidTime(endTime) || endTime.length() != 5) {
 			event.reply("Invalid Input! **" + endTime + "** is not a valid 24 hour format.").setEphemeral(false)
 					.queue(); // setEphemeral(true) only the user who called the function can see the error
-			
+
 		} else {
 			event.reply("You need **" + calcTime(endTime) + "** minutes to auto battle until **" + endTime + "**")
 					.setEphemeral(false).queue();
@@ -139,10 +150,61 @@ public class CommandManager extends ListenerAdapter {
 				System.out.println("attachments.get(0).getUrl() : " + attachments.get(0).getUrl());
 
 				try (InputStream in = new URL(attachments.get(0).getUrl()).openStream()) {
+
+					System.out.println("in : " + in);
+
 					Files.copy(in, Paths.get("D:/MaplestoryM/AB/AB.png"), StandardCopyOption.REPLACE_EXISTING);
-					imageHandling();
+
+					BufferedImage img = ImageIO.read(new File("D:/MaplestoryM/AB/AB.png"));
+					ImageIO.write(img, "png", new File("image.jpg"));
+
+					//imageHandling();
 					ITesseract image = new Tesseract();
+//					image.setPageSegMode(7);
+					image.setLanguage("eng");
+					image.setOcrEngineMode(0);
+
 					String textFromImage = image.doOCR(new File("D:\\MaplestoryM\\AB\\AB.png"));
+					System.out.println("new \n : " + textFromImage);
+
+					File imageFile = new File("D:\\MaplestoryM\\AB\\AB.png");
+					BufferedImage bufferedImage = null;
+					try {
+						bufferedImage = ImageIO.read(imageFile);
+						BufferedImage image2 = bufferedImage.getSubimage(1210, 425, 150, 50);
+						File pathFile = new File("D:\\MaplestoryM\\AB\\time.png");
+						ImageIO.write(image2, "png", pathFile);
+						String time = image.doOCR(new File("D:\\MaplestoryM\\AB\\time.png"));
+						System.out.println("time: " + time);
+
+						
+						image2 = bufferedImage.getSubimage(1465, 420, 180, 50);
+						pathFile = new File("D:\\MaplestoryM\\AB\\mobs_killed.png");
+						ImageIO.write(image2, "png", pathFile);
+						String mobs_killed = image.doOCR(new File("D:\\MaplestoryM\\AB\\mobs_killed.png"));
+						System.out.println("mobs_killed: " + mobs_killed);
+						
+						image2 = bufferedImage.getSubimage(1210, 500, 500, 50);
+						pathFile = new File("D:\\MaplestoryM\\AB\\gold_mesos.png");
+						ImageIO.write(image2, "png", pathFile);
+						String gold_mesos = image.doOCR(new File("D:\\MaplestoryM\\AB\\gold_mesos.png"));
+						System.out.println("gold_mesos: " + gold_mesos);
+						
+						image2 = bufferedImage.getSubimage(1210, 570, 500, 50);
+						pathFile = new File("D:\\MaplestoryM\\AB\\red_mesos.png");
+						ImageIO.write(image2, "png", pathFile);
+						String red_mesos = image.doOCR(new File("D:\\MaplestoryM\\AB\\red_mesos.png"));
+						System.out.println("red_mesos: " + red_mesos);
+					
+						image2 = bufferedImage.getSubimage(1250, 650, 400, 60);
+						pathFile = new File("D:\\MaplestoryM\\AB\\exp.png");
+						ImageIO.write(image2, "png", pathFile);
+						String exp = image.doOCR(new File("D:\\MaplestoryM\\AB\\exp.png"));
+						System.out.println("exp: " + exp);
+					} catch (IOException e) {
+						System.out.println(e);
+					}
+
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -162,12 +224,23 @@ public class CommandManager extends ListenerAdapter {
 			}
 
 		}
+
 	}
 
 	public static void imageHandling() throws Exception {
 		File f = new File("D:\\MaplestoryM\\AB\\AB.png");
 
 		BufferedImage ipimage = ImageIO.read(f);
+
+//		ipimage = ImageHelper.convertImageToBinary(ipimage);
+//		
+//		ITesseract image = new Tesseract();
+////		image.setPageSegMode(7);
+//		image.setLanguage("eng");
+//		image.setOcrEngineMode(0);
+//
+//		String textFromImage = image.doOCR(ipimage);
+//		System.out.println("imageHandling() : " + textFromImage);
 
 		// getting RGB content of the whole image file
 		double d = ipimage.getRGB(ipimage.getTileWidth() / 2, ipimage.getTileHeight() / 2);
@@ -204,7 +277,7 @@ public class CommandManager extends ListenerAdapter {
 
 		ArrayList<String> importantInfo = new ArrayList<>();
 		for (String split : splits) {
-			System.out.println("split : " + split);
+			// System.out.println("split : " + split);
 			String splitsWithoutComma[] = convertImageToBinary.split(",");
 		}
 
@@ -228,6 +301,8 @@ public class CommandManager extends ListenerAdapter {
 		BufferedImage topimage = Mat2BufferedImage(gray);
 		String topimageString = it.doOCR(topimage); // greyscale to fix red coloured text not
 
+		System.out.println("imageHandling()");
+		System.out.println("topimageString : " + topimageString);
 		ImageIO.write(thresholdImage(ipimage, 128), "jpg", new File("D:\\MaplestoryM\\AB\\AB_thresholdImage.png"));
 	}
 

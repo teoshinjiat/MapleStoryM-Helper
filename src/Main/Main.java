@@ -30,11 +30,10 @@ public class Main {
 	public static void main(String[] args) throws LoginException, InterruptedException, IOException {
 		System.out.println("Started MaplestoryM-Helper");
 
-		JDA builder = JDABuilder
-				.createDefault(getBotTokenFromConfig())
-				.enableIntents(GatewayIntent.MESSAGE_CONTENT).build().awaitReady();
+		JDA builder = JDABuilder.createDefault(getBotTokenFromConfig()).enableIntents(GatewayIntent.MESSAGE_CONTENT)
+				.build().awaitReady();
 		builder.getPresence().setStatus(OnlineStatus.IDLE);
-		builder.getPresence().setActivity(Activity.competing("MaplestoryM"));
+		builder.getPresence().setActivity(Activity.playing("MaplestoryM"));
 		builder.addEventListener(new CommandManager());
 		builder.addEventListener(new ModalListener());
 		builder.addEventListener(new ABListener());
@@ -44,6 +43,7 @@ public class Main {
 			Maple.upsertCommand("grind_calc", "calculate grind result").queue();
 			Maple.upsertCommand("ab_calc", "calculate minutes until expected end time").addOption(OptionType.STRING,
 					"time", "Time in 24H Format, 2PM = 14:00 | 12AM = 00:00 | 2AM = 02:00", true).queue();
+			Maple.upsertCommand("package_calc", "calculate which growth package has the most value").queue();
 		}
 	}
 
