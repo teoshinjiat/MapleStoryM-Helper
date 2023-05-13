@@ -1,7 +1,15 @@
 # MaplestoryM-Helper
 # Timeline (Showcase)
 
-# 24/April/2023 Manual calculation based on user inputs
+# 10/May/2023 Added AB Calculation
+![image](https://github.com/teoshinjiat/MapleStoryM-Helper/assets/21898084/454de709-e9cc-4ca0-b21e-bd5b39b0f35b)
+![image](https://github.com/teoshinjiat/MapleStoryM-Helper/assets/21898084/b6f22613-407c-453d-8fec-7044f1286e24)
+
+![image](https://github.com/teoshinjiat/MapleStoryM-Helper/assets/21898084/0406f184-80a2-4ea9-9d7d-8319335ca5ca)
+![image](https://github.com/teoshinjiat/MapleStoryM-Helper/assets/21898084/d52a193e-0778-49a0-ba43-446efd01efea)
+
+<details>
+<summary> 24/April/2023 Manual calculation based on user inputs</summary>
  Inputs
  
  ![image](https://user-images.githubusercontent.com/21898084/234108692-0ec6c186-1c59-41b8-95a7-6ec1d1f4c06f.png)
@@ -9,7 +17,7 @@
  Result
  
  ![image](https://user-images.githubusercontent.com/21898084/234108761-50f75856-c1e4-4666-81e8-16c145817a2b.png)
-
+</details>
 
 <details>
 
