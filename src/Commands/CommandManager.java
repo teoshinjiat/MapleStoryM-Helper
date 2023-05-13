@@ -140,7 +140,7 @@ public class CommandManager extends ListenerAdapter {
 			if (!event.getMessage().getAttachments().isEmpty()) {
 
 				Long test = Long.valueOf("2675418");
-				System.out.println("test:"+test);
+				System.out.println("test:" + test);
 				String contentType = event.getMessage().getAttachments().get(0).getContentType();
 				System.out.println("contentType : " + contentType);
 
@@ -183,7 +183,6 @@ public class CommandManager extends ListenerAdapter {
 						System.out.println("mobs_killed: " + mobs_killed);
 						resultModel.calculateNumberOfMobsKilled(mobs_killed.trim());
 
-
 						image2 = bufferedImage.getSubimage(1210, 500, 500, 50);
 						pathFile = new File("D:\\MaplestoryM\\AB\\gold_mesos.png");
 						ImageIO.write(image2, "png", pathFile);
@@ -191,14 +190,12 @@ public class CommandManager extends ListenerAdapter {
 						System.out.println("gold_mesos: " + gold_mesos);
 						resultModel.calculateGoldMesos(gold_mesos.trim());
 
-
 						image2 = bufferedImage.getSubimage(1210, 570, 500, 50);
 						pathFile = new File("D:\\MaplestoryM\\AB\\red_mesos.png");
 						ImageIO.write(image2, "png", pathFile);
 						String red_mesos = image.doOCR(new File("D:\\MaplestoryM\\AB\\red_mesos.png"));
 						System.out.println("red_mesos: " + red_mesos);
 						resultModel.calculateRedMesos(red_mesos.trim());
-
 
 						image2 = bufferedImage.getSubimage(1250, 650, 400, 60);
 						pathFile = new File("D:\\MaplestoryM\\AB\\exp.png");
@@ -243,45 +240,46 @@ public class CommandManager extends ListenerAdapter {
 		embedResult.setColor(Color.GREEN);
 
 		// mobs
-		embedResult.addField("Mobs Killed Per/s : " + String.valueOf(nf.format(resultModel.getMobsKilledPerSec())), "",
+		embedResult.addField("<:mobs_killed:1107015902882443325>Mobs Killed Per/s : " + String.valueOf(nf.format(resultModel.getMobsKilledPerSec())), "",
 				true);
 		embedResult.addField("", "", true);
 		embedResult.addField(
-				"Mobs Killed Per/h : " + String.valueOf(nf.format((int) (resultModel.getMobsKilledPerSec() * 60 * 60))),
+				"<:mobs_killed:1107015902882443325>Mobs Killed Per/h : " + String.valueOf(nf.format((int) (resultModel.getMobsKilledPerSec() * 60 * 60))),
 				"", true);
 
 		// exp
-		embedResult.addField("EXP/s : " + String.valueOf(nf.format(resultModel.getExpPerSec())), "", true);
+		embedResult.addField("<:exp:1107016139617337384>EXP/s : " + String.valueOf(nf.format(resultModel.getExpPerSec())), "", true);
 		embedResult.addField("", "", true);
-		embedResult.addField("EXP/h : " + String.valueOf(nf.format(resultModel.getExpPerSec() * 60 * 60)), "", true);
+		embedResult.addField("<:exp:1107016139617337384>EXP/h : " + String.valueOf(nf.format(resultModel.getExpPerSec() * 60 * 60)), "", true);
 
 		// gold mesos
-		embedResult.addField("Gold Mesos/s : " + String.valueOf(nf.format(resultModel.getGoldMesosPerSec())), "", true);
+		embedResult.addField("<:gold_mesos:1107015907257110629>Gold Mesos/s : " + String.valueOf(nf.format(resultModel.getGoldMesosPerSec())), "", true);
 		embedResult.addField("", "", true);
-		embedResult.addField("Gold Mesos/h : " + String.valueOf(nf.format(resultModel.getGoldMesosPerSec() * 60 * 60)),
+		embedResult.addField("<:gold_mesos:1107015907257110629>Gold Mesos/h : " + String.valueOf(nf.format(resultModel.getGoldMesosPerSec() * 60 * 60)),
 				"", true);
 
 		// red mesos
-		embedResult.addField("Red Mesos/s : " + String.valueOf(nf.format(resultModel.getRedMesosPerSec())), "", true);
+		embedResult.addField("<:red_mesos:1107015904568549386>Red Mesos/s : "
+				+ String.valueOf(nf.format(resultModel.getRedMesosPerSec())), "", true);
 		embedResult.addField("", "", true);
-		embedResult.addField("Red Mesos/h : " + String.valueOf(nf.format(resultModel.getRedMesosPerSec() * 60 * 60)),
-				"", true);
+		embedResult.addField("<:red_mesos:1107015904568549386>Red Mesos/h : "
+				+ String.valueOf(nf.format(resultModel.getRedMesosPerSec() * 60 * 60)), "", true);
 
 		// total mesos
 		embedResult.addField(
-				"Total Mesos/s : "
+				"<:total_mesos:1107016711946903603>Total Mesos/s : "
 						+ String.valueOf(nf.format(resultModel.getGoldMesosPerSec() + resultModel.getRedMesosPerSec())),
 				"", true);
 		embedResult.addField("", "", true);
 		embedResult.addField(
-				"Total Mesos/h : " + String.valueOf(
+				" <:total_mesos:1107016711946903603>Total Mesos/h : " + String.valueOf(
 						nf.format((resultModel.getGoldMesosPerSec() + resultModel.getRedMesosPerSec()) * 60 * 60)),
 				"", true);
 
 //		event.deferReply().queue();
 
 		event.getChannel().sendMessageEmbeds(embedResult.build()).queue();
-}
+	}
 
 //	public static void imageHandling() throws Exception {
 //		File f = new File("D:\\MaplestoryM\\AB\\AB.png");
