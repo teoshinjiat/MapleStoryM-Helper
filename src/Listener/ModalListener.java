@@ -34,7 +34,6 @@ public class ModalListener extends ListenerAdapter {
 			System.out.println("redMesos : " + redMesos);
 			System.out.println("exp : " + exp);
 
-			
 //			event.reply("Sup, " + duration).queue();
 			calculate(event, duration, numberOfMobsKilled, goldMesos, redMesos, exp);
 		}
@@ -103,15 +102,14 @@ public class ModalListener extends ListenerAdapter {
 		embedResult.setAuthor("Result");
 
 		embedResult.setColor(Color.GREEN);
-		
 
 		// mobs
 		embedResult.addField("Mobs Killed Per/s : " + String.valueOf(nf.format(resultModel.getMobsKilledPerSec())), "",
 				true);
 		embedResult.addField("", "", true);
 		embedResult.addField(
-				"Mobs Killed Per/h : " + String.valueOf(nf.format((int)(resultModel.getMobsKilledPerSec() * 60 * 60))), "",
-				true);
+				"Mobs Killed Per/h : " + String.valueOf(nf.format((int) (resultModel.getMobsKilledPerSec() * 60 * 60))),
+				"", true);
 
 		// exp
 		embedResult.addField("EXP/s : " + String.valueOf(nf.format(resultModel.getExpPerSec())), "", true);
@@ -145,9 +143,6 @@ public class ModalListener extends ListenerAdapter {
 
 		event.getHook().sendMessageEmbeds(embedResult.build()).queue(message -> {
 			embedMessageId = message.getIdLong();
-//			message.addReaction(Emoji.fromFormatted(Emotes.MAIN)).queue();
-//			message.addReaction(Emoji.fromFormatted(Emotes.FLEX)).queue();
-//			message.addReaction(Emoji.fromFormatted(Emotes.DEFEND)).queue();
 		});
 
 	}

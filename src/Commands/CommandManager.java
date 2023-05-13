@@ -1,8 +1,7 @@
 package Commands;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,25 +10,23 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
 import org.jetbrains.annotations.NotNull;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
-import org.opencv.core.Size;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 
+import Model.ResultModel;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -43,12 +40,11 @@ import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
-import net.sourceforge.tess4j.util.ImageHelper;
-import nu.pattern.OpenCV;
 
 public class CommandManager extends ListenerAdapter {
 	public static SlashCommandInteractionEvent mainEvent;
 	public static MessageEmbed debugMessage;
+	private static ResultModel resultModel = new ResultModel();
 
 	public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
 		String command = event.getName();
@@ -143,6 +139,8 @@ public class CommandManager extends ListenerAdapter {
 		if (!event.getAuthor().isBot()) {
 			if (!event.getMessage().getAttachments().isEmpty()) {
 
+				Long test = Long.valueOf("2675418");
+				System.out.println("test:"+test);
 				String contentType = event.getMessage().getAttachments().get(0).getContentType();
 				System.out.println("contentType : " + contentType);
 
@@ -158,7 +156,7 @@ public class CommandManager extends ListenerAdapter {
 					BufferedImage img = ImageIO.read(new File("D:/MaplestoryM/AB/AB.png"));
 					ImageIO.write(img, "png", new File("image.jpg"));
 
-					//imageHandling();
+					// imageHandling();
 					ITesseract image = new Tesseract();
 //					image.setPageSegMode(7);
 					image.setLanguage("eng");
@@ -176,31 +174,40 @@ public class CommandManager extends ListenerAdapter {
 						ImageIO.write(image2, "png", pathFile);
 						String time = image.doOCR(new File("D:\\MaplestoryM\\AB\\time.png"));
 						System.out.println("time: " + time);
+						resultModel.calculateTime(time.trim());
 
-						
 						image2 = bufferedImage.getSubimage(1465, 420, 180, 50);
 						pathFile = new File("D:\\MaplestoryM\\AB\\mobs_killed.png");
 						ImageIO.write(image2, "png", pathFile);
 						String mobs_killed = image.doOCR(new File("D:\\MaplestoryM\\AB\\mobs_killed.png"));
 						System.out.println("mobs_killed: " + mobs_killed);
-						
+						resultModel.calculateNumberOfMobsKilled(mobs_killed.trim());
+
+
 						image2 = bufferedImage.getSubimage(1210, 500, 500, 50);
 						pathFile = new File("D:\\MaplestoryM\\AB\\gold_mesos.png");
 						ImageIO.write(image2, "png", pathFile);
 						String gold_mesos = image.doOCR(new File("D:\\MaplestoryM\\AB\\gold_mesos.png"));
 						System.out.println("gold_mesos: " + gold_mesos);
-						
+						resultModel.calculateGoldMesos(gold_mesos.trim());
+
+
 						image2 = bufferedImage.getSubimage(1210, 570, 500, 50);
 						pathFile = new File("D:\\MaplestoryM\\AB\\red_mesos.png");
 						ImageIO.write(image2, "png", pathFile);
 						String red_mesos = image.doOCR(new File("D:\\MaplestoryM\\AB\\red_mesos.png"));
 						System.out.println("red_mesos: " + red_mesos);
-					
+						resultModel.calculateRedMesos(red_mesos.trim());
+
+
 						image2 = bufferedImage.getSubimage(1250, 650, 400, 60);
 						pathFile = new File("D:\\MaplestoryM\\AB\\exp.png");
 						ImageIO.write(image2, "png", pathFile);
 						String exp = image.doOCR(new File("D:\\MaplestoryM\\AB\\exp.png"));
 						System.out.println("exp: " + exp);
+						resultModel.calculateExp(exp.trim());
+
+						sendEmbed(event);
 					} catch (IOException e) {
 						System.out.println(e);
 					}
@@ -227,97 +234,146 @@ public class CommandManager extends ListenerAdapter {
 
 	}
 
-	public static void imageHandling() throws Exception {
-		File f = new File("D:\\MaplestoryM\\AB\\AB.png");
+	private void sendEmbed(MessageReceivedEvent event) {
+		EmbedBuilder embedResult = new EmbedBuilder();
+		NumberFormat nf = NumberFormat.getInstance(Locale.US);
 
-		BufferedImage ipimage = ImageIO.read(f);
+		embedResult.setAuthor("Result");
 
-//		ipimage = ImageHelper.convertImageToBinary(ipimage);
-//		
-//		ITesseract image = new Tesseract();
-////		image.setPageSegMode(7);
-//		image.setLanguage("eng");
-//		image.setOcrEngineMode(0);
+		embedResult.setColor(Color.GREEN);
+
+		// mobs
+		embedResult.addField("Mobs Killed Per/s : " + String.valueOf(nf.format(resultModel.getMobsKilledPerSec())), "",
+				true);
+		embedResult.addField("", "", true);
+		embedResult.addField(
+				"Mobs Killed Per/h : " + String.valueOf(nf.format((int) (resultModel.getMobsKilledPerSec() * 60 * 60))),
+				"", true);
+
+		// exp
+		embedResult.addField("EXP/s : " + String.valueOf(nf.format(resultModel.getExpPerSec())), "", true);
+		embedResult.addField("", "", true);
+		embedResult.addField("EXP/h : " + String.valueOf(nf.format(resultModel.getExpPerSec() * 60 * 60)), "", true);
+
+		// gold mesos
+		embedResult.addField("Gold Mesos/s : " + String.valueOf(nf.format(resultModel.getGoldMesosPerSec())), "", true);
+		embedResult.addField("", "", true);
+		embedResult.addField("Gold Mesos/h : " + String.valueOf(nf.format(resultModel.getGoldMesosPerSec() * 60 * 60)),
+				"", true);
+
+		// red mesos
+		embedResult.addField("Red Mesos/s : " + String.valueOf(nf.format(resultModel.getRedMesosPerSec())), "", true);
+		embedResult.addField("", "", true);
+		embedResult.addField("Red Mesos/h : " + String.valueOf(nf.format(resultModel.getRedMesosPerSec() * 60 * 60)),
+				"", true);
+
+		// total mesos
+		embedResult.addField(
+				"Total Mesos/s : "
+						+ String.valueOf(nf.format(resultModel.getGoldMesosPerSec() + resultModel.getRedMesosPerSec())),
+				"", true);
+		embedResult.addField("", "", true);
+		embedResult.addField(
+				"Total Mesos/h : " + String.valueOf(
+						nf.format((resultModel.getGoldMesosPerSec() + resultModel.getRedMesosPerSec()) * 60 * 60)),
+				"", true);
+
+//		event.deferReply().queue();
+
+		event.getChannel().sendMessageEmbeds(embedResult.build()).queue();
+}
+
+//	public static void imageHandling() throws Exception {
+//		File f = new File("D:\\MaplestoryM\\AB\\AB.png");
 //
-//		String textFromImage = image.doOCR(ipimage);
-//		System.out.println("imageHandling() : " + textFromImage);
+//		BufferedImage ipimage = ImageIO.read(f);
+//
+////		ipimage = ImageHelper.convertImageToBinary(ipimage);
+////		
+////		ITesseract image = new Tesseract();
+//////		image.setPageSegMode(7);
+////		image.setLanguage("eng");
+////		image.setOcrEngineMode(0);
+////
+////		String textFromImage = image.doOCR(ipimage);
+////		System.out.println("imageHandling() : " + textFromImage);
+//
+//		// getting RGB content of the whole image file
+//		double d = ipimage.getRGB(ipimage.getTileWidth() / 2, ipimage.getTileHeight() / 2);
+//
+//		// comparing the values
+//		// and setting new scaling values
+//		// that are later on used by RescaleOP
+//		if (d >= -1.4211511E7 && d < -7254228) {
+//			processImg(ipimage, 3f, -10f);
+//		} else if (d >= -7254228 && d < -2171170) {
+//			processImg(ipimage, 1.455f, -47f);
+//		} else if (d >= -2171170 && d < -1907998) {
+//			processImg(ipimage, 1.35f, -10f);
+//		} else if (d >= -1907998 && d < -257) {
+//			processImg(ipimage, 1.19f, 0.5f);
+//		} else if (d >= -257 && d < -1) {
+//			processImg(ipimage, 1f, 0.5f);
+//		} else if (d >= -1 && d < 2) {
+//			processImg(ipimage, 1f, 0.35f);
+//		}
+//	}
 
-		// getting RGB content of the whole image file
-		double d = ipimage.getRGB(ipimage.getTileWidth() / 2, ipimage.getTileHeight() / 2);
+//	public static void processImg(BufferedImage ipimage, float scaleFactor, float offset)
+//			throws IOException, TesseractException {
+//
+//		// rescale OP object
+//		// for gray scaling images
+//		Tesseract it = new Tesseract();
+//		it.setTessVariable("tessedit_char_whitelist", "0123456789:,"); // detect number only
+//
+//		String convertImageToBinary = it.doOCR(ImageHelper.convertImageToBinary(ipimage)); // greyscale to fix red
+//																							// coloured text not
+//		String splits[] = convertImageToBinary.split("\\n");
+//
+//		ArrayList<String> importantInfo = new ArrayList<>();
+//		for (String split : splits) {
+//			// System.out.println("split : " + split);
+//			String splitsWithoutComma[] = convertImageToBinary.split(",");
+//		}
+//
+//		it.setDatapath("D:\\MaplestoryM\\AB");
+//
+//		nu.pattern.OpenCV.loadLocally(); // add this
+//
+//		OpenCV cv = new OpenCV();
+//
+//		// https://www.tutorialspoint.com/reading-a-colored-image-as-grey-scale-using-java-opencv-library
+//		Mat gray = Imgcodecs.imread("D:\\MaplestoryM\\AB\\AB.png", Imgcodecs.IMREAD_GRAYSCALE);
+//		Mat resizedMat = new Mat();
+//		double width = gray.cols();
+//		double height = gray.rows();
+//		double aspect = width / height;
+//		Size sz = new Size(width * aspect * 2, height * aspect * 2);
+//		Imgproc.resize(gray, resizedMat, sz);
+//
+//		Imgcodecs.imwrite("D:\\MaplestoryM\\AB\\AB_gray.png", gray);
+//
+//		BufferedImage topimage = Mat2BufferedImage(gray);
+//		String topimageString = it.doOCR(topimage); // greyscale to fix red coloured text not
+//
+//		System.out.println("imageHandling()");
+//		System.out.println("topimageString : " + topimageString);
+//		ImageIO.write(thresholdImage(ipimage, 128), "jpg", new File("D:\\MaplestoryM\\AB\\AB_thresholdImage.png"));
+//	}
 
-		// comparing the values
-		// and setting new scaling values
-		// that are later on used by RescaleOP
-		if (d >= -1.4211511E7 && d < -7254228) {
-			processImg(ipimage, 3f, -10f);
-		} else if (d >= -7254228 && d < -2171170) {
-			processImg(ipimage, 1.455f, -47f);
-		} else if (d >= -2171170 && d < -1907998) {
-			processImg(ipimage, 1.35f, -10f);
-		} else if (d >= -1907998 && d < -257) {
-			processImg(ipimage, 1.19f, 0.5f);
-		} else if (d >= -257 && d < -1) {
-			processImg(ipimage, 1f, 0.5f);
-		} else if (d >= -1 && d < 2) {
-			processImg(ipimage, 1f, 0.35f);
-		}
-	}
-
-	public static void processImg(BufferedImage ipimage, float scaleFactor, float offset)
-			throws IOException, TesseractException {
-
-		// rescale OP object
-		// for gray scaling images
-		Tesseract it = new Tesseract();
-		it.setTessVariable("tessedit_char_whitelist", "0123456789:,"); // detect number only
-
-		String convertImageToBinary = it.doOCR(ImageHelper.convertImageToBinary(ipimage)); // greyscale to fix red
-																							// coloured text not
-		String splits[] = convertImageToBinary.split("\\n");
-
-		ArrayList<String> importantInfo = new ArrayList<>();
-		for (String split : splits) {
-			// System.out.println("split : " + split);
-			String splitsWithoutComma[] = convertImageToBinary.split(",");
-		}
-
-		it.setDatapath("D:\\MaplestoryM\\AB");
-
-		nu.pattern.OpenCV.loadLocally(); // add this
-
-		OpenCV cv = new OpenCV();
-
-		// https://www.tutorialspoint.com/reading-a-colored-image-as-grey-scale-using-java-opencv-library
-		Mat gray = Imgcodecs.imread("D:\\MaplestoryM\\AB\\AB.png", Imgcodecs.IMREAD_GRAYSCALE);
-		Mat resizedMat = new Mat();
-		double width = gray.cols();
-		double height = gray.rows();
-		double aspect = width / height;
-		Size sz = new Size(width * aspect * 2, height * aspect * 2);
-		Imgproc.resize(gray, resizedMat, sz);
-
-		Imgcodecs.imwrite("D:\\MaplestoryM\\AB\\AB_gray.png", gray);
-
-		BufferedImage topimage = Mat2BufferedImage(gray);
-		String topimageString = it.doOCR(topimage); // greyscale to fix red coloured text not
-
-		System.out.println("imageHandling()");
-		System.out.println("topimageString : " + topimageString);
-		ImageIO.write(thresholdImage(ipimage, 128), "jpg", new File("D:\\MaplestoryM\\AB\\AB_thresholdImage.png"));
-	}
-
-	// https://www.tutorialspoint.com/how-to-convert-opencv-mat-object-to-bufferedimage-object-using-java
-	public static BufferedImage Mat2BufferedImage(Mat mat) throws IOException {
-		// Encoding the image
-		MatOfByte matOfByte = new MatOfByte();
-		Imgcodecs.imencode(".jpg", mat, matOfByte);
-		// Storing the encoded Mat in a byte array
-		byte[] byteArray = matOfByte.toArray();
-		// Preparing the Buffered Image
-		InputStream in = new ByteArrayInputStream(byteArray);
-		BufferedImage bufImage = ImageIO.read(in);
-		return bufImage;
-	}
+//	// https://www.tutorialspoint.com/how-to-convert-opencv-mat-object-to-bufferedimage-object-using-java
+//	public static BufferedImage Mat2BufferedImage(Mat mat) throws IOException {
+//		// Encoding the image
+//		MatOfByte matOfByte = new MatOfByte();
+//		Imgcodecs.imencode(".jpg", mat, matOfByte);
+//		// Storing the encoded Mat in a byte array
+//		byte[] byteArray = matOfByte.toArray();
+//		// Preparing the Buffered Image
+//		InputStream in = new ByteArrayInputStream(byteArray);
+//		BufferedImage bufImage = ImageIO.read(in);
+//		return bufImage;
+//	}
 
 //	// Guild command -- instantly updated (max 100)
 //	@Override
@@ -335,34 +391,34 @@ public class CommandManager extends ListenerAdapter {
 //		event.getGuild().updateCommands().addCommands(commandData).queue();
 //	}
 
-	// Global command -- up to an hour to update
-	// i dont need these
+//	// Global command -- up to an hour to update
+//	// i dont need these
+//
+//	public SlashCommandInteractionEvent getMainEvent() {
+//		return mainEvent;
+//	}
+//
+//	public void setMainEvent(SlashCommandInteractionEvent mainEvent) {
+//		this.mainEvent = mainEvent;
+//	}
 
-	public SlashCommandInteractionEvent getMainEvent() {
-		return mainEvent;
-	}
-
-	public void setMainEvent(SlashCommandInteractionEvent mainEvent) {
-		this.mainEvent = mainEvent;
-	}
-
-	// https://stackoverflow.com/a/17542851
-	public static BufferedImage thresholdImage(BufferedImage image, int threshold) {
-		BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-		result.getGraphics().drawImage(image, 0, 0, null);
-		WritableRaster raster = result.getRaster();
-		int[] pixels = new int[image.getWidth()];
-		for (int y = 0; y < image.getHeight(); y++) {
-			raster.getPixels(0, y, image.getWidth(), 1, pixels);
-			for (int i = 0; i < pixels.length; i++) {
-				if (pixels[i] < threshold)
-					pixels[i] = 0;
-				else
-					pixels[i] = 255;
-			}
-			raster.setPixels(0, y, image.getWidth(), 1, pixels);
-		}
-		return result;
-	}
+//	// https://stackoverflow.com/a/17542851
+//	public static BufferedImage thresholdImage(BufferedImage image, int threshold) {
+//		BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+//		result.getGraphics().drawImage(image, 0, 0, null);
+//		WritableRaster raster = result.getRaster();
+//		int[] pixels = new int[image.getWidth()];
+//		for (int y = 0; y < image.getHeight(); y++) {
+//			raster.getPixels(0, y, image.getWidth(), 1, pixels);
+//			for (int i = 0; i < pixels.length; i++) {
+//				if (pixels[i] < threshold)
+//					pixels[i] = 0;
+//				else
+//					pixels[i] = 255;
+//			}
+//			raster.setPixels(0, y, image.getWidth(), 1, pixels);
+//		}
+//		return result;
+//	}
 
 }
