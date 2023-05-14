@@ -9,6 +9,7 @@ import javax.security.auth.login.LoginException;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
+import org.opencv.core.Core;
 
 import Commands.CommandManager;
 import Listener.ABListener;
@@ -20,6 +21,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import nu.pattern.OpenCV;
 
 public class Main {
 	// https://www.youtube.com/watch?v=jGrD8AZfTig
@@ -28,6 +30,8 @@ public class Main {
 
 	// Main method
 	public static void main(String[] args) throws LoginException, InterruptedException, IOException {
+		OpenCV.loadShared();
+
 		System.out.println("Started MaplestoryM-Helper");
 
 		JDA builder = JDABuilder.createDefault(getBotTokenFromConfig()).enableIntents(GatewayIntent.MESSAGE_CONTENT)
