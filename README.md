@@ -2,7 +2,11 @@
 # Timeline (Showcase)
 
 
-https://github.com/teoshinjiat/MapleStoryM-Helper/assets/21898084/40aa5871-367d-415e-bd2f-dc4f8f835bbb
+
+
+https://github.com/teoshinjiat/MapleStoryM-Helper/assets/21898084/8d8236e3-0e04-4aaa-8565-00ba602e784f
+
+
 
 
 # 14/May/2023 Added icons in embed body
